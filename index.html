@@ -111,47 +111,37 @@
     <script>
       document.getElementById("studentForm").addEventListener("submit", function(event) {
         event.preventDefault();
-
-        // Collect form data
         const formData = new FormData(event.target);
         const name = formData.get("name");
         const grade = formData.get("grade");
         const term = formData.get("term");
         const gender = formData.get("gender");
 
-        // Send the data to Google Apps Script using fetch
-        fetch('https://script.google.com/macros/s/AKfycbwyrSYl0rXfwEquG8mDhDqX_eh2R3rDMDYaH77kC2wEZvgB8IW8NFSsrslWXra_nq-dJw/exec', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        // Use fetch to send data to Google Apps Script endpoint
+        fetch("https://script.google.com/macros/s/AKfycbwyrSYl0rXfwEquG8mDhDqX_eh2R3rDMDYaH77kC2wEZvgB8IW8NFSsrslWXra_nq-dJw/exec", {
+          method: "POST",
           body: JSON.stringify({
             name: name,
             grade: grade,
             term: term,
-            gender: gender,
+            gender: gender
           }),
+          headers: {
+            "Content-Type": "application/json"
+          }
         })
         .then(response => response.json())
         .then(data => {
-          // Handle the success message
           document.getElementById("resultMessage").innerText = data.message;
           document.getElementById("resultMessage").style.display = "block";
-
-          // Clear the form inputs after submission
-          document.getElementById("studentForm").reset();
-
-          // Optionally, refresh the form after 2 seconds
-          setTimeout(function() {
-            location.reload();
-          }, 2000);
+          document.getElementById("studentForm").reset(); // Reset the form
         })
         .catch(error => {
-          console.error('Error:', error);
-          document.getElementById("resultMessage").innerText = 'There was an error adding the student.';
+          document.getElementById("resultMessage").innerText = "Error submitting the form.";
           document.getElementById("resultMessage").style.display = "block";
         });
       });
     </script>
   </body>
 </html>
+
