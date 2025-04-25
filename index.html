@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .form-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+      }
+
+      h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        text-align: left;
+        margin: 10px 0 5px;
+        font-weight: bold;
+      }
+
+      input[type="text"], select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      #resultMessage {
+        margin-top: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <h2>New Student Admission Form</h2>
+      <form id="studentForm">
+        <label for="name">Student Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="grade">Grade:</label>
+        <select id="grade" name="grade" required>
+          <option value="PLAYGROUP">PLAYGROUP</option>
+          <option value="PP1">PP1</option>
+          <option value="PP2">PP2</option>
+          <option value="GRADE 1">GRADE 1</option>
+          <option value="GRADE 2">GRADE 2</option>
+          <option value="GRADE 3">GRADE 3</option>
+          <option value="GRADE 4">GRADE 4</option>
+          <option value="GRADE 5">GRADE 5</option>
+          <option value="GRADE 6">GRADE 6</option>
+          <option value="GRADE 7">GRADE 7</option>
+        </select><br>
+
+        <label for="term">Term:</label>
+        <select id="term" name="term" required>
+          <option value="1">Term 1</option>
+          <option value="2">Term 2</option>
+          <option value="3">Term 3</option>
+        </select><br>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select><br>
+
+        <button type="submit">Add New Student</button>
+      </form>
+
+      <div id="resultMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+      document.getElementById("studentForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Collect form data
+        const formData = new FormData(event.target);
+        const name = formData.get("name");
+        const grade = formData.get("grade");
+        const term = formData.get("term");
+        const gender = formData.get("gender");
+
+        // Send the data to Google Apps Script using fetch
+        fetch('https://script.google.com/macros/s/YOUR_DEPLOYMENT_URL/exec', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            grade: grade,
+            term: term,
+            gender: gender,
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Handle the success message
+          document.getElementById("resultMessage").innerText = data.message;
+          document.getElementById("resultMessage").style.display = "block";
+
+          // Clear the form inputs after submission
+          document.getElementById("studentForm").reset();
+
+          // Optionally, refresh the form after 2 seconds
+          setTimeout(function() {
+            location.reload();
+          }, 2000);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById("resultMessage").innerText = 'There was an error adding the student.';
+          document.getElementById("resultMessage").style.display = "block";
+        });
+      });
+    </script>
+  </body>
+</html>
