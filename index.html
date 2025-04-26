@@ -138,9 +138,10 @@
           document.getElementById("resultMessage").style.color = "green";
           form.reset();
 
-          setTimeout(() => {
-            location.reload();
-          }, 2000);
+          // Redirect to the new URL after a successful submission
+          setTimeout(function() {
+            window.location.href = "https://script.google.com/a/macros/sherton.website/s/AKfycbw0AhzY4EPPS5Lw-XfVF86xqpKwvGxpesWakU-W2ghq7tdCsU4-Z86C6pR8X9NULqze/exec";
+          }, 2000); // Delay redirection by 2 seconds to allow user to see success message
         }).catch(error => {
           console.error("Error!", error.message);
           document.getElementById("resultMessage").innerText = "❌ Error submitting form.";
@@ -150,5 +151,3 @@
     </script>
   </body>
 </html>
-
-
