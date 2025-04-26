@@ -64,7 +64,7 @@
         margin-top: 20px;
         font-size: 16px;
         font-weight: bold;
-        display: none;
+        color: green;
       }
     </style>
   </head>
@@ -73,7 +73,7 @@
       <h2>New Student Admission Form</h2>
       <form id="studentForm">
         <label for="name">Student Name:</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" required><br>
 
         <label for="grade">Grade:</label>
         <select id="grade" name="grade" required>
@@ -87,68 +87,62 @@
           <option value="GRADE 5">GRADE 5</option>
           <option value="GRADE 6">GRADE 6</option>
           <option value="GRADE 7">GRADE 7</option>
-        </select>
+        </select><br>
 
         <label for="term">Term:</label>
         <select id="term" name="term" required>
           <option value="1">Term 1</option>
           <option value="2">Term 2</option>
           <option value="3">Term 3</option>
-        </select>
+        </select><br>
 
         <label for="gender">Gender:</label>
         <select id="gender" name="gender" required>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
-        </select>
+        </select><br>
 
         <button type="submit">Add New Student</button>
       </form>
 
-      <div id="resultMessage"></div>
+      <div id="resultMessage" style="display: none;"></div>
     </div>
 
     <script>
       document.getElementById("studentForm").addEventListener("submit", function(event) {
         event.preventDefault();
-
         const formData = new FormData(event.target);
         const name = formData.get("name");
         const grade = formData.get("grade");
         const term = formData.get("term");
         const gender = formData.get("gender");
 
-        const resultMessage = document.getElementById("resultMessage");
-        resultMessage.style.display = "block";
-        resultMessage.style.color = "orange";
-        resultMessage.innerText = "⏳ Submitting... Please wait";
-
-        fetch("https://script.google.com/macros/s/AKfycbwUL6Lr0e3_uz_tAtWWS1bRWWefMcQuX527VdeaIf5OpBA5TgO0cKDLWAHN8xi1DpR-PQ/exec", {
+        // Use fetch to send data to Google Apps Script endpoint
+        fetch("https://script.google.com/macros/s/AKfycbyUnDXQp_JodXWPIWhFR18TBWZdkduUlti_IdbpwW9S2r3YTCQw3r7YWpNgLfVFuB2qdQ/exec", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
           body: JSON.stringify({
             name: name,
             grade: grade,
             term: term,
             gender: gender
-          })
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok. Status: " + response.status);
+          }),
+          headers: {
+            "Content-Type": "application/json"
           }
-          return response.json();
         })
+        .then(response => response.json())
         .then(data => {
-          resultMessage.innerText = data.message || "✅ Student added successfully!";
-          resultMessage.style.color = "green";
-          document.getElementById("studentForm").reset();
+          document.getElementById("resultMessage").innerText = data.message;
+          document.getElementById("resultMessage").style.display = "block";
+          document.getElementById("resultMessage").style.color = "green";
+          document.getElementById("studentForm").reset(); // Reset the form
         })
         .catch(error => {
+          console.error("Fetch error:", error); // 🔍 log error to browser console
+          const resultMessage = document.getElementById("resultMessage");
           resultMessage.innerText = "❌ Error submitting the form: " + error.message;
           resultMessage.style.color = "red";
+          resultMessage.style.display = "block";
         });
       });
     </script>
