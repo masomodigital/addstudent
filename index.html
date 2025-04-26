@@ -64,6 +64,7 @@
         margin-top: 20px;
         font-size: 16px;
         font-weight: bold;
+        color: green;
       }
     </style>
   </head>
@@ -72,7 +73,7 @@
       <h2>New Student Admission Form</h2>
       <form id="studentForm">
         <label for="name">Student Name:</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" required><br>
 
         <label for="grade">Grade:</label>
         <select id="grade" name="grade" required>
@@ -86,20 +87,20 @@
           <option value="GRADE 5">GRADE 5</option>
           <option value="GRADE 6">GRADE 6</option>
           <option value="GRADE 7">GRADE 7</option>
-        </select>
+        </select><br>
 
         <label for="term">Term:</label>
         <select id="term" name="term" required>
           <option value="1">Term 1</option>
           <option value="2">Term 2</option>
           <option value="3">Term 3</option>
-        </select>
+        </select><br>
 
         <label for="gender">Gender:</label>
         <select id="gender" name="gender" required>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
-        </select>
+        </select><br>
 
         <button type="submit">Add New Student</button>
       </form>
@@ -110,38 +111,44 @@
     <script>
       document.getElementById("studentForm").addEventListener("submit", function(event) {
         event.preventDefault();
-        const formData = new FormData(event.target);
 
-        fetch("https://script.google.com/macros/s/AKfycbyMD5IhwlrHgGW69IytlFiBCE0CiinDIOQjt7fmZEwf9vADTJsbBNJYPbqjxCF8nInH/exec", {
+        const form = event.target;
+        const formData = new FormData(form);
+
+        const data = {
+          name: formData.get("name"),
+          grade: formData.get("grade"),
+          term: formData.get("term"),
+          gender: formData.get("gender")
+        };
+
+        document.getElementById("resultMessage").innerText = "Please wait... Submitting form.";
+        document.getElementById("resultMessage").style.display = "block";
+        document.getElementById("resultMessage").style.color = "blue";
+
+        fetch("https://script.google.com/macros/s/AKfycbxzvn5iwz5qTe8YMKqtw_76B03SaJQxNEX8aEy8VTFsWaev6WhfBfL4m6wuo0ghV2LYLw/exec", {
           method: "POST",
-          body: JSON.stringify({
-            name: formData.get("name"),
-            grade: formData.get("grade"),
-            term: formData.get("term"),
-            gender: formData.get("gender")
-          }),
+          mode: "no-cors",  // Google Scripts only accept no-cors for public forms
           headers: {
             "Content-Type": "application/json"
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          const msg = document.getElementById("resultMessage");
-          msg.innerText = data.message;
-          msg.style.display = "block";
-          msg.style.color = data.message.includes("successfully") ? "green" : "red";
-          if (data.message.includes("successfully")) {
-            document.getElementById("studentForm").reset();
-          }
-        })
-        .catch(error => {
-          const msg = document.getElementById("resultMessage");
-          msg.innerText = "❌ Error submitting the form: " + error.message;
-          msg.style.color = "red";
-          msg.style.display = "block";
+          },
+          body: JSON.stringify(data)
+        }).then(() => {
+          document.getElementById("resultMessage").innerText = "✅ Student added successfully!";
+          document.getElementById("resultMessage").style.color = "green";
+          form.reset();
+
+          setTimeout(() => {
+            location.reload();
+          }, 2000);
+        }).catch(error => {
+          console.error("Error!", error.message);
+          document.getElementById("resultMessage").innerText = "❌ Error submitting form.";
+          document.getElementById("resultMessage").style.color = "red";
         });
       });
     </script>
   </body>
 </html>
+
 
